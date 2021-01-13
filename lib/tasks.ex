@@ -11,7 +11,13 @@ defmodule Tasks do
     |> write()
   end
 
-  def show_all(), do: read()
+  def show_all() do
+    cond do
+      read() |> Enum.count() == 0 -> {:error, "Nenhum tarefa foi cadastrada ainda!"}
+      read() |> Enum.count() > 0 -> read()
+    end
+  end
+
   def show_id(id), do: read() |> Enum.find(&(&1.id == id))
 
   def show_concluded() do
@@ -24,6 +30,18 @@ defmodule Tasks do
       task != nil ->
         task
     end
+  end
+
+  def delete_id(id) do
+    task = show_id(id)
+
+    new_list =
+      read()
+      |> List.delete(task)
+
+    new_list
+    |> :erlang.term_to_binary()
+    |> write()
   end
 
   defp write(tasks) do
