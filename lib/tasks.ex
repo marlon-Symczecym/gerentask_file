@@ -44,13 +44,40 @@ defmodule Tasks do
     |> Enum.reduce(read(), fn x, acc -> List.delete(acc, x) end)
   end
 
+  def update(id, attr, new_value) do
+    task = show_id(id)
+
+    new_task =
+      task
+      |> update_attr(attr, new_value)
+
+    [task]
+    |> delete_item()
+    |> List.insert_at(0, new_task)
+    |> :erlang.term_to_binary()
+    |> write()
+  end
+
+  defp update_attr(task, attr, new_value) do
+    %{task | "#{attr}": new_value}
+  end
+
   defp write(tasks) do
     File.write("#{@tasks[:directory]}/#{@tasks[:file]}", tasks)
   end
 
   defp id_generate() do
-    read()
-    |> Enum.count()
+    cond do
+      read() |> Enum.count() == 0 ->
+        0
+
+      read() |> Enum.count() > 0 ->
+        nova =
+          read()
+          |> List.last()
+
+        nova.id
+    end
   end
 
   defp read() do
@@ -58,5 +85,6 @@ defmodule Tasks do
 
     file
     |> :erlang.binary_to_term()
+    |> Enum.sort_by(fn x -> x end, :asc)
   end
 end
