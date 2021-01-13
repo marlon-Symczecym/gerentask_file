@@ -14,6 +14,18 @@ defmodule Tasks do
   def show_all(), do: read()
   def show_id(id), do: read() |> Enum.find(&(&1.id == id))
 
+  def show_concluded() do
+    task = read() |> Enum.find(&(&1.concluded == true))
+
+    cond do
+      task == nil ->
+        {:error, "Nenhum tarefa foi concluida ainda!"}
+
+      task != nil ->
+        task
+    end
+  end
+
   defp write(tasks) do
     File.write("#{@tasks[:directory]}/#{@tasks[:file]}", tasks)
   end
