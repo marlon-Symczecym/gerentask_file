@@ -72,11 +72,11 @@ defmodule Tasks do
         0
 
       read() |> Enum.count() > 0 ->
-        nova =
+        new =
           read()
           |> List.last()
 
-        nova.id
+        new.id
     end
   end
 
