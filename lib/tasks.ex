@@ -33,15 +33,15 @@ defmodule Tasks do
   end
 
   def delete_id(id) do
-    task = show_id(id)
-
-    new_list =
-      read()
-      |> List.delete(task)
-
-    new_list
+    [show_id(id)]
+    |> delete_item()
     |> :erlang.term_to_binary()
     |> write()
+  end
+
+  defp delete_item(tasks) do
+    tasks
+    |> Enum.reduce(read(), fn x, acc -> List.delete(acc, x) end)
   end
 
   defp write(tasks) do
