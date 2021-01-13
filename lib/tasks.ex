@@ -5,6 +5,7 @@ defmodule Tasks do
   @tasks %{:directory => "files", :file => "tasks.txt"}
 
   defp write() do
+    File.write("#{@tasks[:directory]}/#{@tasks[:file]}")
   end
 
   def read() do
